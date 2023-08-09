@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real-time Auction</title>
+</head>
+<body>
+<h1>Real-time Auction</h1>
+<p>Highest Bid: <span id="highestBid">0</span></p>
+<p>Winning Bidder: <span id="winningBidder">Kimushkha</span></p>
+<input type="number" id="bidAmount" placeholder="Enter your bid">
+<button id="placeBid">Place Bid</button>
+
+<script>
+const socket = new WebSocket('ws://localhost:4000');
+
+socket.addEventListener('message', (event) => {
+const data = JSON.parse(event.data);
+if (data.type === 'new_bid') {
+document.getElementById('highestBid').textContent = data.highestBid;
+document.getElementById('winningBidder').textContent = data.winningBidder;
+}
+});
+
+document.getElementById('placeBid').addEventListener('click', () => {
+const bidAmount = parseInt(document.getElementById('bidAmount').value);
+const bidderName = 'YourName'; // Replace with actual bidder name
+socket.send(JSON.stringify({ type: 'bid', bid: bidAmount, bidder: bidderName }));
+});
+</script>
+</body>
+</html>
